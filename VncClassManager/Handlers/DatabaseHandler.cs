@@ -1,28 +1,38 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows.Forms;
 
 namespace VncClassManager.Handlers;
 
 public static class DatabaseHandler
 {
-    private const string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\ariel\Documents\Projects\VncClass\VncClassManager\Users.mdf;Integrated Security=True";
+    private static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={DB_PATH};Integrated Security=True";
     private static readonly SqlConnection Connection;
     private static readonly SqlCommand Cmd;
 
+    public static string? DB_PATH => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Users.mdf");
+            
+        
+    
 
     static DatabaseHandler()
     {
         Connection = new(connectionString);
-        Cmd = new();
-        Cmd.Connection = Connection;
+        Cmd = new()
+        {
+            Connection = Connection
+        };
     }
 
 
     public static bool IsExist(string username)
     {
-        Cmd.CommandText = $"SELECT COUNT(*) FROM Users WHERE username = '{username}'";
+        Cmd.CommandText = $"SELECT COUNT(*) FROM [dbo].[Users] WHERE username = '{username}'";
         Connection.Open();
         int x = (int)Cmd.ExecuteScalar();
         Connection.Close();
@@ -32,7 +42,7 @@ public static class DatabaseHandler
     public static bool IsExist(string username, string pass)
     {
 
-        Cmd.CommandText = $"SELECT COUNT(*) FROM Users WHERE Username = '{username}' AND Password = '{Sha256(pass)}'";
+        Cmd.CommandText = $"SELECT COUNT(*) FROM [dbo].[Users] WHERE Username = '{username}' AND Password = '{Sha256(pass)}'";
         Connection.Open();
         int x = (int)Cmd.ExecuteScalar();
         Connection.Close();
@@ -62,7 +72,7 @@ public static class DatabaseHandler
 
     public static string GetMail(string username)
     {
-        Cmd.CommandText = $"SELECT Mail FROM Users WHERE Username = '{username}'";
+        Cmd.CommandText = $"SELECT Mail FROM [dbo].[Users] WHERE Username = '{username}'";
         Connection.Open();
         string x = (string)Cmd.ExecuteScalar();
         Connection.Close();
@@ -97,6 +107,54 @@ public static class DatabaseHandler
         return sBuilder.ToString();
     }
 
+    public static void CreateDB()
+    {
+        using SqlConnection myConn = new($"Data Source=(LocalDB)\\MSSQLLocalDB;Integrated Security=False");
+        SqlCommand file_cmd = new($@" CREATE DATABASE Users ON (
+                                   NAME='Users', 
+                                   FILENAME='{DB_PATH}')", myConn);
+        using SqlConnection myConn1 = new(connectionString);
+        
+        try
+        {
+            myConn.Open();
+            file_cmd.ExecuteNonQuery();
+            if (myConn.State == ConnectionState.Open)
+            {
+                myConn.Close();
+            }
+
+            SqlCommand tbl_cmd = new(@"
+            CREATE TABLE [dbo].[Users] (
+            [Id]       INT            IDENTITY (1, 1) NOT NULL,
+            [FName]    NVARCHAR (MAX) NOT NULL,
+            [Username] NVARCHAR (MAX) NOT NULL,
+            [Password] NVARCHAR (MAX) NOT NULL,
+            [Mail]     NVARCHAR (MAX) NOT NULL,
+            PRIMARY KEY CLUSTERED ([Id] ASC));", myConn1);
+            myConn1.Open();
+            tbl_cmd.ExecuteNonQuery();
+
+            Debug.WriteLine("DB created");
+        }
+        catch (System.Exception ex)
+        {
+            MessageBox.Show(ex.ToString(), "MyProgram", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        finally
+        {
+            if (myConn.State == ConnectionState.Open)
+            {
+                myConn.Close();
+            }
+            if (myConn1.State == ConnectionState.Open)
+            {
+                myConn1.Close();
+            }
+        }
+
+    }
+
     // Verify a hash against a string.
     //private static bool VerifyHash(HashAlgorithm hashAlgorithm, string input, string hash)
     //{
@@ -108,5 +166,7 @@ public static class DatabaseHandler
 
     //    return comparer.Compare(hashOfInput, hash) == 0;
     //}
+
+
 
 }

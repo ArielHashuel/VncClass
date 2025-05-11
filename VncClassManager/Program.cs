@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 namespace VncClassManager
@@ -11,7 +12,7 @@ namespace VncClassManager
 
         private static readonly LowLevelKeyboardProc _proc;
         private static IntPtr _hookID;
-        private static readonly Login login;
+        public static readonly Login login;
 
         static Program()
         {
@@ -27,10 +28,23 @@ namespace VncClassManager
         [STAThread]
         private static void Main()
         {
-
             _hookID = SetHook(_proc);
+            CheckDB();
             Application.Run(login);
             UnhookWindowsHookEx(_hookID);
+        }
+
+        private static void CheckDB()
+        {
+            //if (string.IsNullOrEmpty(SmtpKey.MAIL))
+            //{
+            //    throw new ArgumentNullException(SmtpKey.err);
+            //}
+            if (!File.Exists(Handlers.DatabaseHandler.DB_PATH))
+            {
+                Handlers.DatabaseHandler.CreateDB();
+            }
+
         }
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)

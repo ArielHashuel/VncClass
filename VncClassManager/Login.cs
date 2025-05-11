@@ -27,16 +27,17 @@ namespace VncClassManager
                     MessageBox.Show("Captcha Verfecation Failed. Please try again.");
                     return;
                 }
-                AuthForm authForm = new(Username.Text);
-                authForm.ShowDialog();
-
-                if (!authForm.Pass) // Check if the 2-Step Verification is successful
-                {
-                    MessageBox.Show("Authentication Failed. Please try again.");
-                    return;
-                }
+                
                 if (DatabaseHandler.IsExist(Username.Text, Password.Text))
                 {
+                    AuthForm authForm = new(Username.Text);
+                    authForm.ShowDialog();
+
+                    if (!authForm.Pass) // Check if the 2-Step Verification is successful
+                    {
+                        MessageBox.Show("Authentication Failed. Please try again.");
+                        return;
+                    }
                     //Vclient.ClientName = Username.Text;
                     vncView.Show();
                     Hide();

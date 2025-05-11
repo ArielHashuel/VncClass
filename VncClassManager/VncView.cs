@@ -199,5 +199,11 @@ namespace VncClassManager
             }
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            Program.login.Close();
+            base.OnClosed(e);
+
+        }
     }
 }
