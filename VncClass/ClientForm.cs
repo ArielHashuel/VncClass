@@ -13,7 +13,7 @@ namespace VncClass
         private delegate void UpdateData(string message);
 
         private const int port = 5500;
-        private const string ip = "192.168.0.5";
+        private const string ip = "10.100.102.4";
 
         public ClientForm()
         {

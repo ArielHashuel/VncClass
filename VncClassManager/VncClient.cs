@@ -159,7 +159,7 @@ namespace VncClassManager
                         {
                             VncScreen?.Invoke(delegate
                             {
-                                VncScreen?.DataBox.AppendText($"{ClientIp}> {Encoding.UTF8.GetString(msg)}");
+                                VncScreen?.DataBox.AppendText($"{ClientIp}> {Encoding.UTF8.GetString(msg)}\n");
                                 if (!(VncScreen?.IsMessageShow ?? true))
                                 {
                                     VncScreen.Messages++;

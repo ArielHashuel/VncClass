@@ -70,10 +70,7 @@ namespace VncClassManager
         {
             if (Screen.Image != img)
             {
-                if (Screen.Image != null)
-                {
-                    Screen.Image.Dispose();
-                }
+                Screen.Image?.Dispose();
 
                 Screen.Image = null;
                 Screen.Image = img;
