@@ -12,6 +12,17 @@
 - Input blocking for class attention (User32.dll)
 
 
+## Screenshots
+### Student:
+![Client_vncclass](https://github.com/user-attachments/assets/31e061d5-8e0e-45b9-9470-5ae956dc5d20)
+
+### Teacher:
+![Server_vncclass](https://github.com/user-attachments/assets/1856e321-a5c9-4cc0-afdc-f13651c6dabd)
+
+### Captcha login:
+![captcha_vncclass](https://github.com/user-attachments/assets/bfdf4ce2-e575-49a2-bfb3-5bfa0344cbd0)
+
+
 ## 🛠️ Build & Package (GitHub Actions)
 We use GitHub Actions for automated packaging and artifact uploads.
 
@@ -35,3 +46,4 @@ We use GitHub Actions for automated packaging and artifact uploads.
 ## 🚀 Roadmap Ideas
 - Role-based control panel (teacher vs. student mode)
 - Auto-discovery of students on local network
+
