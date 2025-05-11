@@ -17,6 +17,12 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Restore NuGet packages VncClass (Client)
+        run: dotnet restore VncClass/VncClass.csproj
+      
+      - name: Restore NuGet packages VncClassManager (Server)
+        run: dotnet restore VncClassManager/VncClassManager.csproj
+
       - name: Build VncClass (Client)
         run: msbuild VncClass/VncClass.csproj /p:Configuration=Release
 
